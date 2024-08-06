@@ -1,6 +1,6 @@
 DBoW2
 =====
-The original source for the functionality to load and save as TXT and BIN files is available at the following address:
+The original source for the functionality to load and save as "txt" and "bin" files is available at the following address:
 https://github.com/shinsumicco/DBoW2
 
 ---
