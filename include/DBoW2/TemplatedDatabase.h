@@ -194,6 +194,18 @@ public:
   const FeatureVector& retrieveFeatures(EntryId id) const;
 
   /**
+   * Saves the database into a text file
+   * @param filename
+   */
+  void saveToTextFile(const std::string &filename) const;  
+
+  /**
+   * Loads the databse from a text file
+   * @param filename
+   */
+  void loadFromTextFile(const std::string &filename);
+
+  /**
    * Stores the database in a file
    * @param filename
    */
@@ -1120,6 +1132,75 @@ const FeatureVector& TemplatedDatabase<TDescriptor, F>::retrieveFeatures
 {
   assert(id < size());
   return m_dfile[id];
+}
+
+// --------------------------------------------------------------------------
+
+template<class TDescriptor, class F>
+void TemplatedDatabase<TDescriptor, F>::saveToTextFile(const std::string &filename) const
+{
+  std::fstream f;
+  f.open(filename.c_str(),std::ios_base::out);
+  // f << this->getVocabulary()->size() << " " << m_nentries << " " << (m_use_di ? 1 : 0) << " " << m_dilevels << std::endl;
+  f << m_nentries << " " << (m_use_di ? 1 : 0) << " " << m_dilevels << std::endl;
+
+  typename InvertedFile::const_iterator iit;
+  typename IFRow::const_iterator irit;
+  unsigned int word_id = 0;
+  for(iit = m_ifile.begin(); iit != m_ifile.end(); ++iit)
+  {
+    for(irit = iit->begin(); irit != iit->end(); ++irit)
+    {
+      f << word_id << " " << (int)irit->entry_id << " " << irit->word_weight << std::endl;
+    }
+    ++word_id;
+  }
+  f.close();
+}
+
+// --------------------------------------------------------------------------
+
+template<class TDescriptor, class F>
+void TemplatedDatabase<TDescriptor, F>::loadFromTextFile(const std::string &filename)
+{
+  std::ifstream f;
+  f.open(filename.c_str());
+  
+  int voc_size, tmp_use_di;
+  std::string s;
+  std::stringstream ss;
+
+  getline(f, s);
+
+  ss << s;
+  // ss >> voc_size;
+  ss >> m_nentries;
+  ss >> tmp_use_di;
+  m_use_di = tmp_use_di != 0;
+  ss >> m_dilevels;
+
+  // std::cout << m_ifile.size() << std::endl;
+  // m_ifile.resize(voc_size);
+  
+  while(!f.eof())
+  {
+    std::string s;
+    std::stringstream ss;
+    int wid, imgid;
+    float weight;
+    
+    getline(f, s);
+
+    ss << s;
+    ss >> wid;
+    ss >> imgid;
+    ss >> weight;
+    // std::cout << wid << "," << imgid << "," << weight << std::endl;
+    
+    EntryId eid = imgid;
+    WordValue v = weight;
+    m_ifile[wid].push_back(IFPair(eid, v));
+  }
 }
 
 // --------------------------------------------------------------------------

@@ -4,6 +4,8 @@ include(ExternalProject)
 
 option(BUILD_DBoW2   "Build DBoW2"            ON)
 option(BUILD_Demo    "Build demo application" ON)
+option(BUILD_Demo_Bin    "Build demo_bin application" ON)
+option(BUILD_Demo_Database    "Build demo_bin application" ON)
 option(BUILD_UTILS "Build utility executables" ON)
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -50,6 +52,20 @@ if(BUILD_Demo)
   set_target_properties(demo PROPERTIES CXX_STANDARD 11)
   file(COPY demo/images DESTINATION ${CMAKE_BINARY_DIR}/)
 endif(BUILD_Demo)
+
+if(BUILD_Demo_Bin)
+  add_executable(demo_bin demo/demo_bin.cpp)
+  target_link_libraries(demo_bin ${PROJECT_NAME} ${OpenCV_LIBS})
+  set_target_properties(demo_bin PROPERTIES CXX_STANDARD 11)
+  file(COPY demo/images DESTINATION ${CMAKE_BINARY_DIR}/)
+endif(BUILD_Demo_Bin)
+
+if(BUILD_Demo_Database)
+  add_executable(demo_database demo/demo_database.cpp)
+  target_link_libraries(demo_database ${PROJECT_NAME} ${OpenCV_LIBS})
+  set_target_properties(demo_database PROPERTIES CXX_STANDARD 11)
+  file(COPY demo/images DESTINATION ${CMAKE_BINARY_DIR}/)
+endif(BUILD_Demo_Database)
 
 configure_file(src/DBoW2.cmake.in
   "${PROJECT_BINARY_DIR}/DBoW2Config.cmake" @ONLY)
