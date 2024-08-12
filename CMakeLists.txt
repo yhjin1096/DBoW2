@@ -32,6 +32,7 @@ set(SRCS
 set(DEPENDENCY_DIR ${CMAKE_CURRENT_BINARY_DIR}/dependencies)
 set(DEPENDENCY_INSTALL_DIR ${DEPENDENCY_DIR}/install)
 
+set(OpenCV_DIR /home/cona/open_library/opencv-3.4.16/install/share/OpenCV)
 find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
@@ -83,6 +84,7 @@ install(DIRECTORY ${DEPENDENCY_INSTALL_DIR}/ DESTINATION ${CMAKE_INSTALL_PREFIX}
 if(BUILD_UTILS)
   # create a executable
   add_executable(ConvertORBVocabrary util/ConvertORBVocabrary.cpp)
+  add_executable(TimeTestAll util/TimeTestAll.cpp)
 
   # set compile options
   target_compile_options(ConvertORBVocabrary PRIVATE
@@ -92,10 +94,19 @@ if(BUILD_UTILS)
     $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
       -Wall -Wextra -pedantic $<$<CONFIG:Debug>:-Og> $<$<CONFIG:Release>:-O3>
     >)
+  target_compile_options(TimeTestAll PRIVATE
+    $<$<OR:$<CXX_COMPILER_ID:MSVC>>:
+      /W4 /MT$<$<CONFIG:Debug>:d>
+    >
+    $<$<OR:$<CXX_COMPILER_ID:GNU>,$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>>:
+      -Wall -Wextra -pedantic $<$<CONFIG:Debug>:-Og> $<$<CONFIG:Release>:-O3>
+    >)
 
   # include libraries
   target_include_directories(ConvertORBVocabrary PRIVATE ${OpenCV_INCLUDE_DIRS})
+  target_include_directories(TimeTestAll PRIVATE ${OpenCV_INCLUDE_DIRS})
 
   # link libraries
   target_link_libraries(ConvertORBVocabrary PRIVATE DBoW2 ${OpenCV_LIBS})
+  target_link_libraries(TimeTestAll PRIVATE DBoW2 ${OpenCV_LIBS})
 endif()

@@ -1452,7 +1452,7 @@ void TemplatedVocabulary<TDescriptor,F>::saveToTextFile(const std::string &filen
 {
     std::fstream f;
     f.open(filename.c_str(),std::ios_base::out);
-    f << m_k << " " << m_L << " " << " " << m_scoring << " " << m_weighting << std::endl;
+    f << m_k << " " << m_L << " " << m_scoring << " " << m_weighting << std::endl;
 
     for(size_t i=1; i<m_nodes.size();i++)
     {

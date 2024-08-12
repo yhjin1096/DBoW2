@@ -145,64 +145,64 @@ void testDatabase(const vector<vector<cv::Mat > > &features)
 
     // load the vocabulary from disk
     // yml
-    //   OrbVocabulary voc("small_voc.yml.gz");
+    // OrbVocabulary voc("ORBvoc.yml.gz");
+
     // txt
     OrbVocabulary voc;
-    voc.loadFromTextFile("small_voc.txt");
+    voc.loadFromTextFile("ORBvoc.txt");
 
     // bin
-    //   OrbVocabulary voc;
-    //   voc.loadFromBinaryFile("ORBvoc.bin");
+    // OrbVocabulary voc;
+    // voc.loadFromBinaryFile("ORBvoc.bin");
+    
+    // OrbDatabase db(voc, false, 0); // false = do not use direct index
+    // // (so ignore the last param)
+    // // The direct index is useful if we want to retrieve the features that 
+    // // belong to some vocabulary node.
+    // // db creates a copy of the vocabulary, we may get rid of "voc" now
 
-    OrbDatabase db(voc, false, 0); // false = do not use direct index
-    // (so ignore the last param)
-    // The direct index is useful if we want to retrieve the features that 
-    // belong to some vocabulary node.
-    // db creates a copy of the vocabulary, we may get rid of "voc" now
+    // // add images to the database
+    // for(int i = 0; i < NIMAGES; i++)
+    // {
+    //     db.add(features[i]);
+    // }
 
-    // add images to the database
-    for(int i = 0; i < NIMAGES; i++)
-    {
-    db.add(features[i]);
-    }
+    // cout << "... done!" << endl;
+    // cout << "Database information: " << endl << db << endl;
+    // // and query the database
+    // cout << "Querying the database: " << endl;
 
-    cout << "... done!" << endl;
+    // QueryResults ret;
+    // for(int i = 0; i < NIMAGES; i++)
+    // {
+    //     db.query(features[i], ret, 4);
 
-    cout << "Database information: " << endl << db << endl;
+    //     // ret[0] is always the same image in this case, because we added it to the 
+    //     // database. ret[1] is the second best match.
+    //     cout << "Searching for Image " << i << ". " << ret << endl;
+    // }
 
-    // and query the database
-    cout << "Querying the database: " << endl;
+    // cout << endl;
 
-    QueryResults ret;
-    for(int i = 0; i < NIMAGES; i++)
-    {
-    db.query(features[i], ret, 4);
+    // cout << "Saving database..." << endl;
+    
+    // //   db.save("small_db.yml.gz");
+    // // db.saveToTextFile("small_db.txt");
+    // db.saveToBinaryFile("small_db.bin");
 
-    // ret[0] is always the same image in this case, because we added it to the 
-    // database. ret[1] is the second best match.
+    // cout << "... done!" << endl;
 
-    cout << "Searching for Image " << i << ". " << ret << endl;
-    }
 
-    cout << endl;
-
-    // we can save the database. The created file includes the vocabulary
-    // and the entries added
-    cout << "Saving database..." << endl;
-    //   db.save("small_db.yml.gz");
-    db.saveToTextFile("small_db.txt");
-    cout << "... done!" << endl;
 
     // // once saved, we can load it again  
     // cout << "Retrieving database once again..." << endl;
-    // //   OrbDatabase db2("small_db.yml.gz");
-    OrbDatabase db2;
-    db2.setVocabulary(voc);
-    db2.clear();
-    db2.loadFromTextFile("small_db.txt");
+    
+    // //   OrbDatabase db2("small_db.yml.gz");    
+    // OrbDatabase db2;
+    // // db2.loadFromTextFile(voc, "small_db.txt");
+    // db2.loadFromBinaryFile(voc, "small_db.bin");
+
     // cout << "... done! This is: " << endl << db2 << endl;
 }
 
 // ----------------------------------------------------------------------------
-
-

@@ -203,7 +203,21 @@ public:
    * Loads the databse from a text file
    * @param filename
    */
-  void loadFromTextFile(const std::string &filename);
+  template<class T>
+  void loadFromTextFile(const T &voc, const std::string &filename);
+
+  /**
+   * Saves the database into a text file
+   * @param filename
+   */
+  void saveToBinaryFile(const std::string &filename) const;  
+
+  /**
+   * Loads the databse from a text file
+   * @param filename
+   */
+  template<class T>
+  void loadFromBinaryFile(const T &voc, const std::string &filename);
 
   /**
    * Stores the database in a file
@@ -1161,12 +1175,17 @@ void TemplatedDatabase<TDescriptor, F>::saveToTextFile(const std::string &filena
 // --------------------------------------------------------------------------
 
 template<class TDescriptor, class F>
-void TemplatedDatabase<TDescriptor, F>::loadFromTextFile(const std::string &filename)
+template<class T>
+void TemplatedDatabase<TDescriptor, F>::loadFromTextFile(const T &voc, const std::string &filename)
 {
+  setVocabulary(voc);
+  clear();
+
   std::ifstream f;
   f.open(filename.c_str());
   
-  int voc_size, tmp_use_di;
+  // int voc_size;
+  int tmp_use_di;
   std::string s;
   std::stringstream ss;
 
@@ -1200,6 +1219,77 @@ void TemplatedDatabase<TDescriptor, F>::loadFromTextFile(const std::string &file
     EntryId eid = imgid;
     WordValue v = weight;
     m_ifile[wid].push_back(IFPair(eid, v));
+  }
+}
+
+// --------------------------------------------------------------------------
+
+template<class TDescriptor, class F>
+void TemplatedDatabase<TDescriptor, F>::saveToBinaryFile(const std::string &filename) const
+{
+  std::ofstream ofs;
+  ofs.open(filename.c_str(), std::ios_base::out | std::ios::binary);
+
+  if (!ofs) {
+    throw std::string("Could not open file: ") + filename;
+  }
+
+  int tmp_use_di = (m_use_di ? 1 : 0);
+  ofs.write((char*)&m_nentries, sizeof(m_nentries));
+  ofs.write((char*)&tmp_use_di, sizeof(tmp_use_di));
+  ofs.write((char*)&m_dilevels, sizeof(m_dilevels));
+
+  typename InvertedFile::const_iterator iit;
+  typename IFRow::const_iterator irit;
+  unsigned int word_id = 0;
+  for(iit = m_ifile.begin(); iit != m_ifile.end(); ++iit)
+  {
+    for(irit = iit->begin(); irit != iit->end(); ++irit)
+    {
+      int tmp_entry_id = (int)irit->entry_id;
+      ofs.write((char*)&word_id, sizeof(word_id));
+      ofs.write((char*)&tmp_entry_id, sizeof(tmp_entry_id));
+      ofs.write((char*)&irit->word_weight, sizeof(irit->word_weight));
+    }
+    ++word_id;
+  }
+
+  ofs.close();
+}
+
+// --------------------------------------------------------------------------
+
+template<class TDescriptor, class F>
+template<class T>
+void TemplatedDatabase<TDescriptor, F>::loadFromBinaryFile(const T &voc, const std::string &filename)
+{
+  setVocabulary(voc);
+  clear();
+
+  std::ifstream ifs;
+  ifs.open(filename.c_str(), std::ios_base::in | std::ios::binary);
+
+  if (!ifs) {
+    throw std::string("Could not open file: ") + filename;
+  }
+
+  int tmp_use_di;
+  ifs.read((char*)&m_nentries, sizeof(m_nentries));
+  ifs.read((char*)&tmp_use_di, sizeof(tmp_use_di));
+  ifs.read((char*)&m_dilevels, sizeof(m_dilevels));
+  m_use_di = tmp_use_di != 0;
+
+  while(!ifs.eof())
+  {
+    int word_id, image_id;
+    double weight;
+    ifs.read((char*)&word_id, sizeof(word_id));
+    ifs.read((char*)&image_id, sizeof(image_id));
+    ifs.read((char*)&weight, sizeof(weight));
+
+    EntryId eid = image_id;
+    WordValue v = weight;
+    m_ifile[word_id].push_back(IFPair(eid, v)); 
   }
 }
 
