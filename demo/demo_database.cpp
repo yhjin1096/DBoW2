@@ -145,64 +145,64 @@ void testDatabase(const vector<vector<cv::Mat > > &features)
 
     // load the vocabulary from disk
     // yml
-    // OrbVocabulary voc("ORBvoc.yml.gz");
+    OrbVocabulary voc("small_db.yml.gz");
 
     // txt
-    OrbVocabulary voc;
-    voc.loadFromTextFile("ORBvoc.txt");
+    // OrbVocabulary voc;
+    // voc.loadFromTextFile("ORBvoc.txt");
 
     // bin
     // OrbVocabulary voc;
     // voc.loadFromBinaryFile("ORBvoc.bin");
     
-    // OrbDatabase db(voc, false, 0); // false = do not use direct index
-    // // (so ignore the last param)
-    // // The direct index is useful if we want to retrieve the features that 
-    // // belong to some vocabulary node.
-    // // db creates a copy of the vocabulary, we may get rid of "voc" now
+    OrbDatabase db(voc, false, 0); // false = do not use direct index
+    // (so ignore the last param)
+    // The direct index is useful if we want to retrieve the features that 
+    // belong to some vocabulary node.
+    // db creates a copy of the vocabulary, we may get rid of "voc" now
 
-    // // add images to the database
-    // for(int i = 0; i < NIMAGES; i++)
-    // {
-    //     db.add(features[i]);
-    // }
+    // add images to the database
+    for(int i = 0; i < NIMAGES; i++)
+    {
+        db.add(features[i]);
+    }
 
-    // cout << "... done!" << endl;
-    // cout << "Database information: " << endl << db << endl;
-    // // and query the database
-    // cout << "Querying the database: " << endl;
+    cout << "... done!" << endl;
+    cout << "Database information: " << endl << db << endl;
+    // and query the database
+    cout << "Querying the database: " << endl;
 
-    // QueryResults ret;
-    // for(int i = 0; i < NIMAGES; i++)
-    // {
-    //     db.query(features[i], ret, 4);
+    QueryResults ret;
+    for(int i = 0; i < NIMAGES; i++)
+    {
+        db.query(features[i], ret, 4);
 
-    //     // ret[0] is always the same image in this case, because we added it to the 
-    //     // database. ret[1] is the second best match.
-    //     cout << "Searching for Image " << i << ". " << ret << endl;
-    // }
+        // ret[0] is always the same image in this case, because we added it to the 
+        // database. ret[1] is the second best match.
+        cout << "Searching for Image " << i << ". " << ret << endl;
+    }
 
-    // cout << endl;
+    cout << endl;
 
-    // cout << "Saving database..." << endl;
+    cout << "Saving database..." << endl;
     
-    // //   db.save("small_db.yml.gz");
-    // // db.saveToTextFile("small_db.txt");
+    db.save("small_db.yml.gz");
+    // db.saveToTextFile("small_db.txt");
     // db.saveToBinaryFile("small_db.bin");
 
-    // cout << "... done!" << endl;
+    cout << "... done!" << endl;
 
 
 
-    // // once saved, we can load it again  
-    // cout << "Retrieving database once again..." << endl;
+    // once saved, we can load it again  
+    cout << "Retrieving database once again..." << endl;
     
-    // //   OrbDatabase db2("small_db.yml.gz");    
+      OrbDatabase db2("small_db.yml.gz");    
     // OrbDatabase db2;
-    // // db2.loadFromTextFile(voc, "small_db.txt");
+    // db2.loadFromTextFile(voc, "small_db.txt");
     // db2.loadFromBinaryFile(voc, "small_db.bin");
 
-    // cout << "... done! This is: " << endl << db2 << endl;
+    cout << "... done! This is: " << endl << db2 << endl;
 }
 
 // ----------------------------------------------------------------------------
